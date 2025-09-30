@@ -397,8 +397,8 @@ const Sidebar = forwardRef<SidebarRef, SidebarProps>(({ isOpen, activeSelection,
   return (
     <aside
       aria-label="Main navigation"
-      className={`flex-shrink-0 sticky top-16 h-[calc(100vh-4rem)] bg-[var(--bg-secondary-alpha)] backdrop-blur-sm overflow-y-auto transition-sidebar ${
-        isOpen ? 'w-64' : 'w-0'
+      className={`flex-shrink-0 sticky top-16 h-[calc(100vh-4rem)] bg-[var(--bg-secondary-alpha)] backdrop-blur-sm overflow-y-auto overflow-x-hidden transition-sidebar ${
+        isOpen ? 'w-64 opacity-100' : 'w-0 opacity-0'
       }`}
     >
       <div className="flex flex-col h-full py-4 text-[var(--text-secondary)]">

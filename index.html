@@ -278,13 +278,13 @@
       .animate-checkbox-pop { animation: checkbox-pop-in var(--duration-long) var(--ease-overshoot) forwards; }
 
       /* --- Transitions --- */
-      .transition-sidebar { transition: width var(--duration-long) var(--ease-in-out); }
+      .transition-sidebar { transition: width var(--duration-long) var(--ease-in-out), opacity var(--duration-medium) var(--ease-in-out); }
       .card-hover-effect {
         transition: transform var(--duration-quick) var(--ease-decelerate), box-shadow var(--duration-medium) var(--ease-decelerate), border-color var(--duration-quick) var(--ease-decelerate);
       }
       .card-hover-effect:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 25px -5px rgba(var(--glow-color-rgb, var(--accent-color-rgb)), 0.3);
+        box-shadow: 0 8px 25px -5px rgba(var(--glow-color-rgb, var(--default-glow-color-rgb, var(--accent-color-rgb))), 0.3);
       }
       .card-selected-style {
         transform: scale(1.02);
@@ -319,39 +319,48 @@
       .prose-styles hr { border: none; border-top: 1px solid var(--border-color); margin: 2em 0; }
       .prose-styles input[type="checkbox"] { filter: grayscale(1); cursor: default; }
 
-      /* --- 8-Bit Situational Animations (64x64) --- */
-      @keyframes tea-sip { 0%, 25%, 100% { transform: translateY(0) rotate(0); } 10% { transform: translateY(-4px) rotate(-10deg); } 20% { transform: translateY(-4px) rotate(-10deg); } 23% { transform: translateY(0) rotate(3deg); } }
-      @keyframes steam-rise { 0% { transform: translateY(0) scale(0.9); opacity: 0; } 20% { opacity: 0.8; } 100% { transform: translateY(-24px) scale(1.6); opacity: 0; } }
-      @keyframes eye-blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
-      @keyframes calm-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, 1.03); } }
-      @keyframes reading-page-turn { 0%, 93%, 100% { transform: skewY(0deg) translateX(0); } 96% { transform: skewY(15deg) translateX(-3px); } 98% { transform: skewY(-6deg) translateX(0); } }
-      @keyframes reading-head-nod { 0%, 85%, 100% { transform: translateY(0) rotate(0); } 90% { transform: translateY(2px) rotate(1.5deg); } 95% { transform: translateY(2px) rotate(1.5deg); } }
-      @keyframes meditate-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-      @keyframes meditate-aura-pulse { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.05); } }
-      @keyframes cat-tail-sway { 0%, 100% { transform: rotate(-6deg); } 20% { transform: rotate(-10deg); } 60% { transform: rotate(12deg); } 80% { transform: rotate(10deg); } }
-      @keyframes cat-stretch { 0%, 80%, 100% { transform: scale(1, 1) rotate(0); } 90% { transform: scale(1.1, 0.95) rotate(-2deg); } 95% { transform: scale(1.1, 0.95) rotate(-2deg); } }
-      @keyframes tv-flicker-light { 0%, 100% { opacity: 0.5; } 15% { opacity: 0.85; } 30% { opacity: 0.45; } 55% { opacity: 0.95; } 75% { opacity: 0.55; } }
-      @keyframes tv-screen-flicker { 0% { background-color: #558; } 20% { background-color: #669; } 50% { background-color: #447; } 80% { background-color: #77a; } 100% { background-color: #558; } }
-      @keyframes head-bob { 0%, 100% { transform: translateY(0) rotate(0.5deg); } 50% { transform: translateY(1px) rotate(-0.5deg); } }
-      @keyframes plant-sway { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(2deg); } }
-      @keyframes water-drip { 0% { opacity: 1; transform: translateY(0) scale(1.2); } 100% { opacity: 0; transform: translateY(16px) scale(0.6); } }
-      @keyframes sparkle { 0%, 100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.6); opacity: 0; } }
-      @keyframes guitar-strum { 0%, 100% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(1px, 2px) rotate(1.5deg); } 75% { transform: translate(-1px, 0px) rotate(-1deg); } }
-      @keyframes screen-glow { 0%, 100% { opacity: 0.65; } 50% { opacity: 0.8; } }
-      @keyframes typing-fingers { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-2px); } 75% { transform: translateY(1px); } }
-      @keyframes brush-stroke { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(12deg) translate(-3px, -2px); } 60% { transform: rotate(-6deg) translate(2px, 0); } }
-      @keyframes dog-tail-wag-lazy { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
-      @keyframes dog-ear-twitch-quick { 0%, 88%, 94%, 100% { transform: rotate(0); } 90% { transform: rotate(-12deg); } 92% { transform: rotate(4deg); } }
-      @keyframes dust-motes { 0% { opacity: 0; transform: translate(0, 0); } 50% { opacity: 0.7; } 100% { opacity: 0; transform: translate(8px, -20px); } }
-      @keyframes candle-flicker { 0%, 100% { transform: scale(1, 1) skewX(0); } 30% { transform: scale(1.05, 0.95) skewX(2deg); } 60% { transform: scale(0.95, 1.05) skewX(-2deg); } }
-      @keyframes candle-glow { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.25; } }
-      @keyframes ember-glow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
-      @keyframes smoke-rise { 0% { transform: translate(0, 0) scale(1); opacity: 0.5; } 100% { transform: translate(4px, -30px) scale(1.5); opacity: 0; } }
-      @keyframes fish-swim { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(20px); } }
-      @keyframes fish-tail-sway { 0%, 100% { transform: skewX(0); } 25% { transform: skewX(10deg); } 75% { transform: skewX(-10deg); } }
-      @keyframes bubble-rise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 20% { opacity: 0.6; } 100% { transform: translateY(-30px) scale(1.2); opacity: 0; } }
-      @keyframes curtain-sway { 0%, 100% { transform: skewX(0); } 50% { transform: skewX(1.5deg); } }
-      @keyframes star-twinkle { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.5); opacity: 0.5; } }
+      /* --- New Pixel Art Animations --- */
+      @keyframes slow-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
+      @keyframes gentle-sway { 0%, 100% { transform: rotate(-1deg); } 50% { transform: rotate(1deg); } }
+      @keyframes slow-steam { from { transform: translateY(0); opacity: 0.6; } to { transform: translateY(-12px); opacity: 0; } }
+      @keyframes tv-flicker { 0%, 100% { opacity: 0.8; } 10% { opacity: 0.85; } 20% { opacity: 0.78; } 50% { opacity: 0.9; } 80% { opacity: 0.82; } }
+      @keyframes snow-fall { from { transform: translateY(-10px); } to { transform: translateY(64px); } }
+      @keyframes fire-flicker { 0%, 100% { transform: scaleY(1); opacity: 1; } 50% { transform: scaleY(0.95); opacity: 0.9; } }
+      @keyframes lava-bubble { 0% { transform: translateY(0) scale(1); opacity: 1; } 80% { transform: translateY(-30px) scale(1.1); opacity: 1; } 100% { transform: translateY(-35px) scale(1.1); opacity: 0; } }
+      @keyframes fish-swim { 0% { transform: translateX(0) scaleX(1); } 40% { transform: translateX(12px) scaleX(1); } 50% { transform: translateX(12px) scaleX(-1); } 90% { transform: translateX(0) scaleX(-1); } 100% { transform: translateX(0) scaleX(1); } }
+      @keyframes candle-flicker-subtle { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0.95); } }
+      @keyframes pendulum-swing { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+      @keyframes typing-keys { 0%, 100% { transform: translateY(0); } 25% { transform: translateY(-1px); } 50% { transform: translateY(0); } 75% { transform: translateY(-1px); } }
+      
+      /* Added subtle animations for static scenes */
+      @keyframes head-nod { 0%, 20%, 100% { transform: translateY(0); } 10% { transform: translateY(-1px); } }
+      @keyframes iron-steam { 0% { opacity: 0; transform: translateY(0) scale(0.5); } 20% { opacity: 0.6; } 100% { opacity: 0; transform: translateY(-8px) scale(1.2); } }
+      @keyframes eye-glint { 0%, 10%, 100% { opacity: 0; } 5% { opacity: 1; } }
+      @keyframes gentle-rock { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+      @keyframes tea-ripple { 0%, 100% { transform: scale(1, 1); opacity: 0.5; } 50% { transform: scale(1.05, 1.1); opacity: 0.2; } }
+      
+      /* TV Soccer Animation */
+      @keyframes soccer-player-1 {
+        0%, 100% { transform: translate(0, 0); }
+        25% { transform: translate(6px, 3px); }
+        50% { transform: translate(12px, -2px); }
+        75% { transform: translate(8px, 5px); }
+      }
+      @keyframes soccer-player-2 {
+        0%, 100% { transform: translate(0, 0); }
+        25% { transform: translate(-4px, -4px); }
+        50% { transform: translate(-10px, 2px); }
+        75% { transform: translate(-6px, -3px); }
+      }
+      @keyframes soccer-ball {
+        0% { transform: translate(0, 0); opacity: 1; }
+        45% { transform: translate(18px, 4px); opacity: 1; }
+        50% { transform: translate(18px, 4px); opacity: 0; }
+        51% { transform: translate(-18px, -4px); opacity: 0; }
+        55% { transform: translate(-18px, -4px); opacity: 1; }
+        95% { transform: translate(0, 0); opacity: 1; }
+        100% { transform: translate(0, 0); opacity: 1; }
+      }
     </style>
   </head>
   <body>

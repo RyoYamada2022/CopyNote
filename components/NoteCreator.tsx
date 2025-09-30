@@ -46,7 +46,7 @@ const compressImage = (file: File): Promise<string> => {
                 const ctx = canvas.getContext('2d');
                 if (!ctx) return reject('Could not get canvas context');
                 ctx.drawImage(img, 0, 0, width, height);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
                 resolve(dataUrl);
             };
             img.onerror = (err) => reject(err);

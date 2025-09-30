@@ -17,6 +17,7 @@ interface HeaderProps {
     isLoading: boolean;
     glowColor: string | null;
     onGlowColorChange: (color: string | null) => void;
+    defaultGlowColor: string;
 }
 
 const SORT_OPTIONS: { id: SortOption, label: string }[] = [
@@ -28,7 +29,7 @@ const SORT_OPTIONS: { id: SortOption, label: string }[] = [
 ];
 
 
-const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, viewMode, onViewModeToggle, themes, activeThemeId, onThemeChange, sortOption, onSortChange, isLoading, glowColor, onGlowColorChange }) => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, viewMode, onViewModeToggle, themes, activeThemeId, onThemeChange, sortOption, onSortChange, isLoading, glowColor, onGlowColorChange, defaultGlowColor }) => {
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false);
   const [isConfigMenuOpen, setIsConfigMenuOpen] = useState(false);
@@ -55,9 +56,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSearchClick, viewMode, o
   const lightThemes = themes.filter(t => t.group === 'light');
   const darkThemes = themes.filter(t => t.group === 'dark');
   
-  const activeTheme = themes.find(t => t.id === activeThemeId);
-  const defaultGlowColor = activeTheme ? activeTheme.colors.accentColor : '#FBBC05';
-
   return (
     <header className="sticky top-0 flex items-center justify-between px-4 h-16 shrink-0 bg-[var(--bg-secondary-alpha)] shadow-md backdrop-blur-sm z-20 border-b border-[var(--border-color)]">
       <div className="flex items-center space-x-4">

@@ -11,9 +11,10 @@ interface EditTagsModalProps {
   onCreateTag: (tagName: string) => void;
   onDeleteTag: (tagName: string) => void;
   onUpdateTag: (oldName: string, updatedData: { newName?: string; color?: string }) => void;
+  showToast: (message: string) => void;
 }
 
-const EditTagsModal: React.FC<EditTagsModalProps> = ({ isOpen, onClose, tags, themeId, onCreateTag, onDeleteTag, onUpdateTag }) => {
+const EditTagsModal: React.FC<EditTagsModalProps> = ({ isOpen, onClose, tags, themeId, onCreateTag, onDeleteTag, onUpdateTag, showToast }) => {
   const [newTagName, setNewTagName] = useState('');
   const [renamingTag, setRenamingTag] = useState<Tag | null>(null);
   const [editedName, setEditedName] = useState('');
@@ -92,7 +93,15 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ isOpen, onClose, tags, th
   }
   
   const handleCreate = () => {
-    onCreateTag(newTagName);
+    const trimmedName = newTagName.trim();
+    if (!trimmedName) {
+      return;
+    }
+    if (tags.some(t => t.name.toLowerCase() === trimmedName.toLowerCase())) {
+      showToast(`La etiqueta "${trimmedName}" ya existe.`);
+      return;
+    }
+    onCreateTag(trimmedName);
     setNewTagName('');
   };
   
@@ -114,8 +123,25 @@ const EditTagsModal: React.FC<EditTagsModalProps> = ({ isOpen, onClose, tags, th
   };
 
   const saveRename = () => {
-    if (renamingTag && editedName.trim() !== '' && editedName.trim() !== renamingTag.name) {
-      onUpdateTag(renamingTag.name, { newName: editedName });
+    if (!renamingTag) return;
+    
+    const newName = editedName.trim();
+    const oldName = renamingTag.name;
+
+    if (!newName) {
+      cancelRename();
+      return;
+    }
+    
+    if (newName.toLowerCase() !== oldName.toLowerCase()) {
+      if (tags.some(t => t.name.toLowerCase() === newName.toLowerCase())) {
+        showToast(`La etiqueta "${newName}" ya existe.`);
+        return;
+      }
+    }
+
+    if (newName !== oldName) {
+      onUpdateTag(oldName, { newName });
     }
     cancelRename();
   };

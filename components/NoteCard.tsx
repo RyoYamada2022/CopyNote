@@ -427,7 +427,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
                 <div className="flex-shrink-0 relative" onClick={e => e.stopPropagation()}>
                     <button
                         onClick={() => setMenuOpen(p => !p)}
-                        className="p-2 rounded-full hover:bg-black/10 text-current opacity-70"
+                        className="p-2 rounded-full hover:bg-black/10 text-current"
                         aria-label="Más acciones"
                         aria-haspopup="true"
                         aria-expanded={isMenuOpen}
