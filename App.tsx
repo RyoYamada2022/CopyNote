@@ -959,22 +959,22 @@ const App: React.FC = () => {
                 onToggleNoteSelection={handleToggleNoteSelection}
                 onMoveSingleNote={handleMoveSingleNote}
               />
-              <SituationalAnimation themeId={themeId} />
+              <footer className="mt-12">
+                <SituationalAnimation themeId={themeId} />
+              </footer>
             </div>
           </main>
         </div>
       </div>
       
-      {selectedNoteIds.length > 0 && (
-        <SelectionToolbar
-            selectedCount={selectedNoteIds.length}
-            onArchive={archiveSelectedNotes}
-            onTrash={trashSelectedNotes}
-            onMove={() => setIsMoveModalOpen(true)}
-            onClearSelection={() => setSelectedNoteIds([])}
-            isLoading={isLoading}
-        />
-      )}
+      <SelectionToolbar
+          selectedCount={selectedNoteIds.length}
+          onArchive={archiveSelectedNotes}
+          onTrash={trashSelectedNotes}
+          onMove={() => setIsMoveModalOpen(true)}
+          onClearSelection={() => setSelectedNoteIds([])}
+          isLoading={isLoading}
+      />
       {toast && (
         <Toast 
             message={toast.message} 

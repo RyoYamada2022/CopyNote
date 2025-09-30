@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Note, Folder, Tag, ListItem, ImageAttachment, CoverImageSettings } from '../types';
-import { PinIcon, PaletteIcon, ArchiveIcon, TrashIcon, RestoreIcon, MoreVertIcon, CopyIcon, UnarchiveIcon, WhatsAppIcon, CheckCircleIcon, RadioButtonUncheckedIcon, MoveToFolderIcon, PencilIcon } from './Icons';
+import { PinIcon, PaletteIcon, ArchiveIcon, TrashIcon, RestoreIcon, MoreVertIcon, CopyIcon, UnarchiveIcon, WhatsAppIcon, CheckCircleIcon, RadioButtonUncheckedIcon, MoveToFolderIcon, PencilIcon, CheckboxOutlineIcon, CheckboxCheckedIcon } from './Icons';
 import ColorPicker from './ColorPicker';
 import { parseMarkdown } from '../utils/markdownParser';
 
@@ -275,11 +275,6 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
     }
   };
 
-  const handleSelectionClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onToggleSelection(id);
-  };
-
   const handleTitleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Cancel any pending single-click action (like opening the editor).
@@ -349,8 +344,9 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
   
   if (viewMode === 'list') {
     const plainTextContent = useMemo(() => getNotePlainText(note), [note]);
-    const snippet = plainTextContent.substring(0, 150).trim() + (plainTextContent.length > 150 ? '...' : '');
-    const formattedDate = new Date(createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+    const snippet = plainTextContent.substring(0, 100).trim();
+    const formattedDate = new Date(createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+
     const noteColor = color || 'var(--bg-secondary)';
     const textColor = color ? getTextColorForBg(color) : 'var(--text-primary)';
 
@@ -360,6 +356,16 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
         animationDelay,
     };
 
+    const handleCompleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (selectionModeActive) {
+            onToggleSelection(id);
+        } else {
+            // "Completing" a note will archive it.
+            onUpdateStatus(id, 'archived');
+        }
+    };
+    
     return (
         <div
             ref={cardRef}
@@ -368,25 +374,32 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
             tabIndex={0}
             onClick={handleClick}
             onKeyDown={!isEditingTitle ? handleKeyDown : undefined}
-            className={`relative group shadow-md rounded-lg border border-transparent hover:border-[var(--border-color)] ${isTrashed ? 'opacity-80' : ''} ${isSelected ? 'ring-2 ring-[var(--accent-color)]' : ''} cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] w-full flex items-center p-3 gap-3 card-hover-effect animate-fade-in-up-stagger`}
+            className={`relative group shadow-md rounded-lg border border-transparent ${isTrashed ? 'opacity-80' : ''} ${isSelected ? 'card-selected-style' : ''} cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] w-full flex items-center p-2 gap-3 card-hover-effect animate-fade-in-up-stagger`}
             style={cardStyle}
         >
-            <button 
-                onClick={handleSelectionClick}
-                aria-pressed={isSelected}
-                aria-label={`Seleccionar nota: ${title}`}
-                className={`absolute top-2 left-2 z-20 p-1 rounded-full bg-black/20 backdrop-blur-sm transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`}
-            >
-                {isSelected 
-                    ? <CheckCircleIcon className="w-5 h-5 text-yellow-400" />
-                    : <RadioButtonUncheckedIcon className="w-5 h-5 text-white/80" />
-                }
-            </button>
+            {/* Left Button: Complete/Select */}
+            <div className="flex-shrink-0">
+                <button
+                    onClick={handleCompleteClick}
+                    aria-pressed={isSelected}
+                    aria-label={selectionModeActive ? `Seleccionar nota: ${title}` : `Marcar como completada: ${title}`}
+                    className="p-2 rounded-full hover:bg-black/10"
+                >
+                    {selectionModeActive ? (
+                        isSelected 
+                            ? <CheckboxCheckedIcon className="w-6 h-6 text-[var(--accent-color)]" />
+                            : <CheckboxOutlineIcon className="w-6 h-6 opacity-70" />
+                    ) : (
+                        <CheckCircleIcon className="w-6 h-6 opacity-70"/>
+                    )}
+                </button>
+            </div>
 
-            <div className="flex-grow min-w-0 pl-8">
-                <div className="flex justify-between items-start" onDoubleClick={handleTitleDoubleClick}>
+            {/* Center Content */}
+            <div className="flex-grow min-w-0" onDoubleClick={handleTitleDoubleClick}>
+                <div className="flex items-center">
                     {isEditingTitle ? (
-                         <input
+                        <input
                             ref={titleInputRef}
                             type="text"
                             value={editedTitle}
@@ -394,75 +407,65 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
                             onBlur={saveTitle}
                             onKeyDown={handleTitleKeyDown}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full bg-black/10 text-lg font-medium border-b-2 border-[var(--accent-color)] focus:outline-none p-1 -m-1"
+                            className="w-full bg-black/10 font-medium border-b-2 border-[var(--accent-color)] focus:outline-none p-1 -m-1"
                             style={{ color: 'inherit' }}
                             aria-label="Editar título de la nota"
                         />
                     ) : (
-                        <h3 id={`note-title-${id}`} className="font-medium break-words text-lg">{title}</h3>
-                    )}
-                    {!isTrashed && !selectionModeActive && (
-                        <button onClick={(e) => handleAction(e, handlePinToggle)} className={`p-1 rounded-full hover:bg-black/10 flex-shrink-0 ml-2 ${pinned ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                            <PinIcon pinned={pinned} className="w-5 h-5" />
-                        </button>
+                        <h3 id={`note-title-${id}`} className="font-medium break-words truncate">{title || 'Nota sin título'}</h3>
                     )}
                 </div>
-
-                <p className="text-sm opacity-80 mt-1 truncate">{snippet}</p>
-
-                <div className="flex items-center justify-between mt-3 text-xs">
-                    <span className="opacity-70">{formattedDate}</span>
-                    {tags && tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 justify-end">
-                            {tags.slice(0, 3).map(tagName => {
-                                const tagColor = tagMap.get(tagName) || '#808080';
-                                return (
-                                    <span key={tagName} style={{ backgroundColor: tagColor, color: getTextColorForBg(tagColor) }} className="px-2 py-0.5 font-medium rounded-full">
-                                        {tagName}
-                                    </span>
-                                );
-                            })}
-                            {tags.length > 3 && <span className="opacity-70">...</span>}
+                <p className="text-sm opacity-80 mt-1 truncate">
+                    <span className="font-medium">{formattedDate}</span>
+                    <span className="mx-2">&middot;</span>
+                    {snippet || 'Sin contenido adicional'}
+                </p>
+            </div>
+            
+            {/* Right Actions Menu */}
+            {!isTrashed && (
+                <div className="flex-shrink-0 relative" onClick={e => e.stopPropagation()}>
+                    <button
+                        onClick={() => setMenuOpen(p => !p)}
+                        className="p-2 rounded-full hover:bg-black/10 text-current opacity-70"
+                        aria-label="Más acciones"
+                        aria-haspopup="true"
+                        aria-expanded={isMenuOpen}
+                    >
+                        <MoreVertIcon className="w-6 h-6"/>
+                    </button>
+                    {isMenuOpen && (
+                        <div ref={menuRef} className="absolute bottom-full right-0 mb-1 w-52 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-md shadow-lg border border-[var(--border-color)] z-20 py-1">
+                            {!selectionModeActive && (
+                                <button onClick={(e) => handleAction(e, handlePinToggle)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]">
+                                    <PinIcon pinned={pinned} className="w-5 h-5 mr-3"/>
+                                    <span>{pinned ? 'Desfijar' : 'Fijar nota'}</span>
+                                </button>
+                            )}
+                            <button onClick={(e) => { e.stopPropagation(); setShowPalette(true); setMenuOpen(false); }} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><PaletteIcon className="w-5 h-5 mr-3"/><span>Cambiar color</span></button>
+                            <button onClick={() => { onMoveNote(id); setMenuOpen(false); }} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><MoveToFolderIcon className="w-5 h-5 mr-3"/><span>Mover nota...</span></button>
+                            <div className="my-1 h-px bg-[var(--border-color)]"></div>
+                            <button onClick={(e) => handleAction(e, handleCopyToClipboardRich)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><CopyIcon className="w-5 h-5 mr-3"/><span>Copiar nota</span></button>
+                            {status === 'archived' ? (
+                                <button onClick={(e) => handleAction(e, () => onUpdateStatus(id, 'active'))} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><UnarchiveIcon className="w-5 h-5 mr-3"/><span>Desarchivar</span></button>
+                            ) : (
+                                <button onClick={(e) => handleAction(e, handleArchive)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><ArchiveIcon className="w-5 h-5 mr-3"/><span>Archivar</span></button>
+                            )}
+                            <button onClick={(e) => handleAction(e, handleMoveToTrash)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)] text-red-500"><TrashIcon className="w-5 h-5 mr-3"/><span>Mover a la papelera</span></button>
                         </div>
                     )}
                 </div>
-            </div>
-            
-            {!isTrashed && !selectionModeActive && (
-                <div 
-                    onClick={e => e.stopPropagation()}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center space-y-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                    <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, handlePaletteToggle)} aria-label="Cambiar color"><PaletteIcon className="w-5 h-5"/></button>
-                    {status === 'archived' ? (
-                        <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, () => onUpdateStatus(id, 'active'))} aria-label="Desarchivar"><UnarchiveIcon className="w-5 h-5"/></button>
-                    ) : (
-                        <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, handleArchive)} aria-label="Archivar"><ArchiveIcon className="w-5 h-5"/></button>
-                    )}
-                    <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, handleMoveToTrash)} aria-label="Mover a la papelera"><TrashIcon className="w-5 h-5"/></button>
-                    <div className="relative">
-                        <button onClick={(e) => { e.stopPropagation(); setMenuOpen(p => !p); }} className="p-2 rounded-full hover:bg-black/20" aria-label="Más opciones" aria-haspopup="true" aria-expanded={isMenuOpen}>
-                            <MoreVertIcon className="w-5 h-5"/>
-                        </button>
-                        {isMenuOpen && (
-                            <div ref={menuRef} className="absolute bottom-full right-0 mb-1 w-48 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-md shadow-lg border border-[var(--border-color)] z-20 py-1" onClick={e => e.stopPropagation()}>
-                                <button onClick={() => { onMoveNote(id); setMenuOpen(false); }} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><MoveToFolderIcon className="w-5 h-5 mr-3" /><span>Mover nota...</span></button>
-                                <button onClick={(e) => handleAction(e, handleCopyToClipboardRich)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><CopyIcon className="w-5 h-5 mr-3"/><span>Copiar nota</span></button>
-                                <button onClick={(e) => handleAction(e, handleCopyToClipboardForWhatsapp)} className="w-full flex items-center text-left px-3 py-2 text-sm hover:bg-[var(--bg-hover)]"><WhatsAppIcon className="w-5 h-5 mr-3"/><span>Copiar para WhatsApp</span></button>
-                            </div>
-                        )}
-                    </div>
-                </div>
             )}
+            
             {isTrashed && (
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <div className="flex-shrink-0 flex items-center">
                     <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, handlePermanentlyDelete)} aria-label="Eliminar permanentemente"><TrashIcon className="w-5 h-5"/></button>
                     <button className="p-2 rounded-full hover:bg-black/20" onClick={(e) => handleAction(e, handleRestore)} aria-label="Restaurar"><RestoreIcon className="w-5 h-5"/></button>
                 </div>
             )}
 
             {showPalette && (
-                <div className="absolute bottom-1/2 translate-y-1/2 right-12 z-20" onClick={e => e.stopPropagation()}>
+                <div className="absolute bottom-0 right-12 z-30" onClick={e => e.stopPropagation()}>
                     <ColorPicker themeId={themeId} color={color || '#202124'} onChange={handleColorChange} onClose={() => setShowPalette(false)} />
                 </div>
             )}
@@ -491,17 +494,17 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, tags: allTags, themeId, viewM
       tabIndex={0}
       onClick={handleClick}
       onKeyDown={!isEditingTitle ? handleKeyDown : undefined}
-      className={`relative group shadow-lg rounded-lg border border-transparent hover:border-[var(--border-color)] ${isTrashed ? 'opacity-80' : ''} ${isSelected ? 'ring-2 ring-[var(--accent-color)]' : ''} cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] flex flex-col ${hasImage ? 'p-2' : ''} card-hover-effect animate-fade-in-up-stagger`}
+      className={`relative group shadow-lg rounded-lg border border-transparent hover:border-[var(--border-color)] ${isTrashed ? 'opacity-80' : ''} ${isSelected ? 'card-selected-style' : ''} cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent-color)] flex flex-col ${hasImage ? 'p-2' : ''} card-hover-effect animate-fade-in-up-stagger`}
       style={cardStyle}
     >
       <button 
-        onClick={handleSelectionClick}
+        onClick={(e) => { e.stopPropagation(); onToggleSelection(id); }}
         aria-pressed={isSelected}
         aria-label={`Seleccionar nota: ${title}`}
-        className={`absolute top-2 left-2 z-20 p-1 rounded-full bg-black/20 backdrop-blur-sm transition-opacity ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`}
+        className={`absolute top-2 left-2 z-20 p-1 rounded-full bg-black/20 backdrop-blur-sm transition-opacity ${isSelected || selectionModeActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'}`}
       >
         {isSelected 
-            ? <CheckCircleIcon className="w-5 h-5 text-yellow-400" />
+            ? <CheckCircleIcon className="w-5 h-5 text-yellow-400 animate-checkbox-pop" />
             : <RadioButtonUncheckedIcon className="w-5 h-5 text-white/80" />
         }
       </button>
