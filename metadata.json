@@ -1,0 +1,5 @@
+{
+  "name": "CopyNote V1.0",
+  "description": "CopyNote is a simple and elegant note-taking application built with React, TypeScript, and Tailwind CSS. It features a header, a collapsible sidebar, a note creation area, and a masonry-style grid for displaying notes.",
+  "requestFramePermissions": []
+}
